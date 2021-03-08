@@ -7,9 +7,14 @@ let postElement = document.querySelector(".postList");
 let navElement = document.querySelector("nav");
 let entryElement = document.querySelector(".entryForm")
 
-
+import { NavBar } from "./nav/NavBar.js"
 import { getPosts, getUsers } from "./data/DataManager.js"
 import { PostList } from './feed/PostList.js'
+
+const showNavBar = () => {
+	const navLocation = document.querySelector("nav");
+	navLocation.innerHTML = NavBar();
+}
 
 const showPostList = () => {
   const postElement = document.querySelector(".postList");
@@ -20,6 +25,7 @@ const showPostList = () => {
 
 
 const startGiffyGram = () => {
+	showNavBar();
 	showPostList();
 }
 
