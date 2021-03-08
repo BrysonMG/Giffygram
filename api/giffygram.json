@@ -1,0 +1,14 @@
+{
+	"users": [],
+	"posts": [
+		{
+			"id": 2,
+			"imageURL": "https://media.giphy.com/media/26xBI73gWquCBBCDe/giphy.gif",
+			"userId": 6,
+			"description": "Description here",
+			"timestamp": 1561695022812,
+			"title": "Enhanced global utilisation"
+		}
+	],
+	"messages":[]
+}
