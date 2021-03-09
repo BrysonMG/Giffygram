@@ -42,3 +42,26 @@ getUsers()
 .then(data => {
     console.log("User Data", data)
 })
+
+//-------------Event Listeners-------------//
+
+const mainElement = document.querySelector('main');
+
+mainElement.addEventListener("change", event => {
+	if (event.target.id === "yearSelection") {
+		const yearAsNum = parseInt(event.target.value)
+		console.log(`User wants to see posts since ${yearAsNum}`)
+	}
+})
+
+mainElement.addEventListener("click", event => {
+	if (event.target.id === "directMessageIcon") {
+		alert("You clicked the pen. Eventually this will open messages. For now, enjoy this box.")
+	}
+})
+
+mainElement.addEventListener("click", event => {
+	if (event.target.id === "go-home") {
+		alert("You clicked the jar. Eventually this will take you back to 'home', but for now, you get a box.")
+	}
+})
