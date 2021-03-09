@@ -10,6 +10,7 @@ let entryElement = document.querySelector(".entryForm")
 import { NavBar } from "./nav/NavBar.js"
 import { getPosts, getUsers } from "./data/DataManager.js"
 import { PostList } from './feed/PostList.js'
+import { footer } from './footer/footer.js'
 
 const showNavBar = () => {
 	const navLocation = document.querySelector("nav");
@@ -23,10 +24,16 @@ const showPostList = () => {
 	})
 }
 
+const showFooter = () => {
+	const footerLocation = document.querySelector('footer');
+	footerLocation.innerHTML = footer();
+}
+
 
 const startGiffyGram = () => {
 	showNavBar();
 	showPostList();
+	showFooter();
 }
 
 startGiffyGram();
