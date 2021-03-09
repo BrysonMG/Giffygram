@@ -65,3 +65,11 @@ mainElement.addEventListener("click", event => {
 		alert("You clicked the jar. Eventually this will take you back to 'home', but for now, you get a box.")
 	}
 })
+
+mainElement.addEventListener("click", event => {
+	if (event.target.id.startsWith("edit")) {
+		alert("See console and click again.")
+		console.log("post clicked:", event.target.id.split("--"));
+		console.log("the id is", event.target.id.split("--")[1])
+	}
+})
