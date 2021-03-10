@@ -8,7 +8,7 @@ let navElement = document.querySelector("nav");
 let entryElement = document.querySelector(".entryForm")
 
 import { NavBar } from "./nav/NavBar.js"
-import { getPosts, getUsers } from "./data/DataManager.js"
+import { getPosts, getUsers, usePostCollection } from "./data/DataManager.js"
 import { PostList } from './feed/PostList.js'
 import { footer } from './footer/footer.js'
 
@@ -38,10 +38,24 @@ const startGiffyGram = () => {
 
 startGiffyGram();
 
-getUsers()
-.then(data => {
-    console.log("User Data", data)
-})
+// getUsers()
+// .then(data => {
+//     console.log("User Data", data)
+// })
+
+const showFilteredPosts = (year) => {
+	const epoch = Date.parse(`01/01/${year}`);
+	const filteredData = usePostCollection().filter(eachPost => {
+		if (eachPost.timestamp >= epoch) {
+			return eachPost
+		}
+	})
+	const postElement = document.querySelector(".postList");
+
+	postElement.innerHTML = PostList(filteredData);
+}
+
+
 
 //-------------Event Listeners-------------//
 
@@ -51,6 +65,8 @@ mainElement.addEventListener("change", event => {
 	if (event.target.id === "yearSelection") {
 		const yearAsNum = parseInt(event.target.value)
 		console.log(`User wants to see posts since ${yearAsNum}`)
+		//Call a function that filters based on year passed into it
+		showFilteredPosts(yearAsNum)
 	}
 })
 
