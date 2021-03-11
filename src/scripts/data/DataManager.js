@@ -24,7 +24,16 @@ export const usePostCollection = () => {
     return [...postCollection]
 }
 
-
+export const createPost = (postObj) => {
+  return fetch("http://localhost:8088/posts", { //To post, fetch takes two arguments. The location and an object
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(postObj) //This line takes in whatever is passed into the function and converts it to JSON format
+  })
+    .then(response => response.json()) //This line takes the response after the post was made and converts it from JSON to an array of objects
+}
 
 
 
