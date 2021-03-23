@@ -8,11 +8,12 @@ let navElement = document.querySelector("nav");
 let entryElement = document.querySelector(".entryForm")
 
 import { NavBar } from "./nav/NavBar.js"
-import { getPosts, getUsers, usePostCollection } from "./data/DataManager.js"
+import { getPosts, getLoggedInUser, usePostCollection, getSinglePost, updatePost } from "./data/DataManager.js"
 import { PostList } from './feed/PostList.js'
 import { footer } from './footer/footer.js'
-import { createPost } from './data/DataManager.js'
+import { createPost, deletePost } from './data/DataManager.js'
 import { PostEntry } from './feed/PostEntry.js'
+import { PostEdit } from './feed/PostEdit.js'
 
 const showNavBar = () => {
 	const navLocation = document.querySelector("nav");
@@ -20,7 +21,7 @@ const showNavBar = () => {
 }
 
 const showPostList = () => {
-  const postElement = document.querySelector(".postList");
+	const postElement = document.querySelector(".postList");
 	getPosts().then((allPosts) => {
 		postElement.innerHTML = PostList(allPosts.reverse());
 	})
@@ -63,7 +64,10 @@ const showFilteredPosts = (year) => {
 	postElement.innerHTML = PostList(filteredData);
 }
 
-
+const showEdit = (postObj) => {
+	const entryElement = document.querySelector(".entryForm")
+	entryElement.innerHTML = PostEdit(postObj)
+}
 
 //-------------Event Listeners-------------//
 
@@ -90,42 +94,85 @@ mainElement.addEventListener("click", event => {
 	}
 })
 
-mainElement.addEventListener("click", event => {
-	if (event.target.id.startsWith("edit")) {
-		alert("See console and click again.")
-		console.log("post clicked:", event.target.id.split("--"));
-		console.log("the id is", event.target.id.split("--")[1])
-	}
-})
 
 mainElement.addEventListener("click", event => {
 	if (event.target.id === "newPost__cancel") {
 		showPostEntry() //This just resets the HTML to the blank template
 	}
-  })
+})
 
-  mainElement.addEventListener("click", event => {
+mainElement.addEventListener("click", event => {
+	event.preventDefault();
+	if (event.target.id.startsWith("delete")) {
+		const postId = event.target.id.split("__")[1];
+		deletePost(parseInt(postId))
+			.then(response => {
+				showPostList();
+			})
+	}
+}
+)
+
+mainElement.addEventListener("click", event => {
+	event.preventDefault();
+	if (event.target.id.startsWith("edit")) {
+		const postId = event.target.id.split("__")[1];
+		getSinglePost(postId)
+			.then(response => {
+				showEdit(response);
+			})
+	}
+})
+
+mainElement.addEventListener("click", event => {
+	event.preventDefault();
+	if (event.target.id.startsWith("updatePost")) {
+		const postId = event.target.id.split("__")[1];
+		//collect all the details into an object
+		const title = document.querySelector("input[name='postTitle']").value
+		const url = document.querySelector("input[name='postURL']").value
+		const description = document.querySelector("textarea[name='postDescription']").value
+		const timestamp = document.querySelector("input[name='postTime']").value
+
+		const postObject = {
+			title: title,
+			imageURL: url,
+			description: description,
+			userId: getLoggedInUser().id,
+			timestamp: parseInt(timestamp),
+			id: parseInt(postId)
+		}
+
+		updatePost(postObject)
+			.then(response => {
+				showPostEntry();
+				showPostList();
+			})
+	}
+})
+
+mainElement.addEventListener("click", event => {
 	event.preventDefault();
 	if (event.target.id === "newPost__submit") {
-	//collect the input values into an object to post to the DB
-	  const title = document.querySelector("input[name='postTitle']").value
-	  const url = document.querySelector("input[name='postURL']").value
-	  const description = document.querySelector("textarea[name='postDescription']").value
-	  //we have not created a user yet - for now, we will hard code `1`.
-	  //we can add the current time as well
-	  const postObject = {
-		  title: title,
-		  imageURL: url,
-		  description: description,
-		  userId: 1,
-		  timestamp: Date.now()
-	  }
-  
-	// be sure to import from the DataManager
+		//collect the input values into an object to post to the DB
+		const title = document.querySelector("input[name='postTitle']").value
+		const url = document.querySelector("input[name='postURL']").value
+		const description = document.querySelector("textarea[name='postDescription']").value
+		//we have not created a user yet - for now, we will hard code `1`.
+		//we can add the current time as well
+		const postObject = {
+			title: title,
+			imageURL: url,
+			description: description,
+			userId: 1,
+			timestamp: Date.now()
+		}
+
+		// be sure to import from the DataManager
 		createPost(postObject)
-	  	.then(response => {
-			  showPostList();
-			  showPostEntry();
-		  })
+			.then(response => {
+				showPostList();
+				showPostEntry();
+			})
 	}
-  })
+})
