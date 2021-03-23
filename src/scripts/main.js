@@ -11,7 +11,7 @@ import { NavBar } from "./nav/NavBar.js"
 import { getPosts, getUsers, usePostCollection } from "./data/DataManager.js"
 import { PostList } from './feed/PostList.js'
 import { footer } from './footer/footer.js'
-import { createPost } from './data/DataManager.js'
+import { createPost, deletePost } from './data/DataManager.js'
 import { PostEntry } from './feed/PostEntry.js'
 
 const showNavBar = () => {
@@ -103,6 +103,18 @@ mainElement.addEventListener("click", event => {
 		showPostEntry() //This just resets the HTML to the blank template
 	}
   })
+
+mainElement.addEventListener("click", event => {
+	event.preventDefault();
+	if (event.target.id.startsWith("delete")) {
+		const postId = event.target.id.split("__")[1];
+		deletePost(parseInt(postId))
+		.then(response => {
+		showPostList();
+		})
+	}
+}
+)
 
   mainElement.addEventListener("click", event => {
 	event.preventDefault();
