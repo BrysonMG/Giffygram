@@ -47,16 +47,32 @@ export const deletePost = postId => {
       .then(getPosts)
 }
 
+export const getSinglePost = (postId) => {
+  return fetch(`http://localhost:8088/posts/${postId}`)
+    .then(response => response.json())
+}
+
+export const updatePost = postObj => {
+  return fetch(`http://localhost:8088/posts/${postObj.id}`, {
+      method: "PUT",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(postObj)
+
+  })
+      .then(response => response.json())
+      .then(getPosts)
+}
 
 
 
+const loggedInUser = {
+	id: 1,
+	name: "Bryan",
+	email: "bryan@bn.com"
+}
 
-// const loggedInUser = {
-// 	id: 1,
-// 	name: "Bryan",
-// 	email: "bryan@bn.com"
-// }
-
-// export const getLoggedInUser = () => {
-// 	return loggedInUser;
-// }
+export const getLoggedInUser = () => {
+	return {...loggedInUser};
+}
