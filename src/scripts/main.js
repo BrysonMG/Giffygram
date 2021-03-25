@@ -8,12 +8,14 @@ let navElement = document.querySelector("nav");
 let entryElement = document.querySelector(".entryForm")
 
 import { NavBar } from "./nav/NavBar.js"
-import { getPosts, getLoggedInUser, usePostCollection, getSinglePost, updatePost } from "./data/DataManager.js"
+import { getPosts, getLoggedInUser, usePostCollection, getSinglePost, updatePost, logoutUser, setLoggedInUser, loginUser, registerUser } from "./data/DataManager.js"
 import { PostList } from './feed/PostList.js'
 import { footer } from './footer/footer.js'
 import { createPost, deletePost } from './data/DataManager.js'
 import { PostEntry } from './feed/PostEntry.js'
 import { PostEdit } from './feed/PostEdit.js'
+import { LoginForm } from './auth/LoginForm.js'
+import { RegisterForm } from './auth/RegisterForm.js'
 
 const showNavBar = () => {
 	const navLocation = document.querySelector("nav");
@@ -45,13 +47,6 @@ const startGiffyGram = () => {
 	showFooter();
 }
 
-startGiffyGram();
-
-// getUsers()
-// .then(data => {
-//     console.log("User Data", data)
-// })
-
 const showFilteredPosts = (year) => {
 	const epoch = Date.parse(`01/01/${year}`);
 	const filteredData = usePostCollection().filter(eachPost => {
@@ -68,6 +63,25 @@ const showEdit = (postObj) => {
 	const entryElement = document.querySelector(".entryForm")
 	entryElement.innerHTML = PostEdit(postObj)
 }
+
+const checkForUser = () => {
+	if (sessionStorage.getItem("user")) {
+		setLoggedInUser(JSON.parse(sessionStorage.getItem("user")));
+		startGiffyGram();
+	} else {
+		showLoginRegister();
+	}
+}
+
+const showLoginRegister = () => {
+	showNavBar();
+	const entryElement = document.querySelector(".entryForm");
+	entryElement.innerHTML = `${LoginForm()} <hr/> <hr/> ${RegisterForm()}`;
+	const postElement = document.querySelector(".postList");
+	postElement.innerHTML = "";
+}
+
+checkForUser();
 
 //-------------Event Listeners-------------//
 
@@ -174,5 +188,55 @@ mainElement.addEventListener("click", event => {
 				showPostList();
 				showPostEntry();
 			})
+	}
+})
+
+mainElement.addEventListener("click", event => {
+	if (event.target.id === "logout") {
+		logoutUser();
+	}
+})
+
+mainElement.addEventListener("click", event => {
+	event.preventDefault();
+	if (event.target.id === "login__submit") {
+		const userObject = {
+			name: document.querySelector("input[name='name']").value,
+			email: document.querySelector("input[name='email']").value
+		}
+		loginUser(userObject)
+			.then(dbUserObj => {
+				if (dbUserObj) {
+					sessionStorage.setItem("user", JSON.stringify(dbUserObj));
+					startGiffyGram();
+				} else {
+					const entryElement = document.querySelector(".entryForm");
+					entryElement.innerHTML = `<p class="center">That user does not exist. Please try again or register for your free account.</p> ${LoginForm()} <hr/> <hr/> ${RegisterForm()}`;
+				}
+			})
+	}
+})
+
+mainElement.addEventListener("click", event => {
+	event.preventDefault();
+	if (event.target.id === "register__submit") {
+		const userObject = {
+			name: document.querySelector("input[name='registerName']").value,
+			email: document.querySelector("input[name='registerEmail']").value
+		}
+		registerUser(userObject)
+			.then(dbUserObj => {
+				sessionStorage.setItem("user", JSON.stringify(dbUserObj));
+				startGiffyGram();
+			})
+	}
+})
+
+mainElement.addEventListener("click", event => {
+	if (event.target.id === "logout") {
+		logoutUser();
+		console.log(getLoggedInUser());
+		sessionStorage.clear();
+		checkForUser();
 	}
 })
